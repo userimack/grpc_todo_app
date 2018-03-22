@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package todo_app;
+
+service Tasker{
+    rpc CreateTask(Task) returns (CreateTaskResponse) {}
+    rpc GetAllTasks(GetAllTasksRequest) returns (TasksList) {};
+    rpc GetTask(Task) returns (Task) {};
+    rpc DeleteTask(Task) returns (DeleteTaskResponse) {};
+}
+
+message GetAllTasksRequest {}
+
+message OperationStatus {
+	enum Status {
+	UNKNOWN_STATUS = 0;
+	SUCCESS = 1;
+	FAILED = 2;
+	}
+	Status status = 1;
+	repeated string errors = 2;
+}
+
+message CreateTaskResponse {
+	OperationStatus op_status = 1;
+	Task task = 2;
+}
+
+message DeleteTaskResponse {
+	OperationStatus op_status = 1;
+}
+
+message Task{
+	enum TaskStatus{
+	UNKNOWN_TASK_STATUS = 0;
+    COMPLETE = 1;
+    PROGRESS = 2;
+    TODO = 3;
+	}
+	int64 id = 1;
+    string text = 2;
+    TaskStatus status = 3;
+}
+
+message TasksList{
+    repeated Task tasks = 1;
+}
