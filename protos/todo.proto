@@ -38,7 +38,7 @@ message Task{
     TODO = 3;
 	}
 	int64 id = 1;
-    string text = 2;
+    string description = 2;
     TaskStatus status = 3;
 }
 
