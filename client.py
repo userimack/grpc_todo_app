@@ -41,13 +41,13 @@ channel = grpc.insecure_channel("localhost:50051")
 stub = todo_pb2_grpc.TaskerStub(channel)
 
 task = todo_pb2.Task()
-task.id = 1 #int(time.strftime('%Y%m%d%H%M%S'))
-task.description = "some text"
+#  task.id = 1 #int(time.strftime('%Y%m%d%H%M%S'))
+task.description = "task 1"
 task.status = todo_pb2.Task.TODO
 
 task1 = todo_pb2.Task()
-task1.id = 2 #int(time.strftime('%Y%m%d%H%M%S'))
-task1.description = "some text"
+#  task1.id = 2 #int(time.strftime('%Y%m%d%H%M%S'))
+task1.description = "task 2"
 task1.status = todo_pb2.Task.TODO
 
 stub.CreateTask(task)
