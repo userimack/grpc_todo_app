@@ -8,6 +8,9 @@ name = "pypi"
 [packages]
 
 grpcio-tools = "*"
+alembic = "*"
+sqlalchemy = "*"
+"psycopg2" = "*"
 
 
 [dev-packages]
