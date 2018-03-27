@@ -29,6 +29,11 @@ class TaskerStub(object):
         request_serializer=todo__pb2.Task.SerializeToString,
         response_deserializer=todo__pb2.Task.FromString,
         )
+    self.UpdateTask = channel.unary_unary(
+        '/todo_app.Tasker/UpdateTask',
+        request_serializer=todo__pb2.Task.SerializeToString,
+        response_deserializer=todo__pb2.CreateTaskResponse.FromString,
+        )
     self.DeleteTask = channel.unary_unary(
         '/todo_app.Tasker/DeleteTask',
         request_serializer=todo__pb2.Task.SerializeToString,
@@ -61,6 +66,13 @@ class TaskerServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def UpdateTask(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def DeleteTask(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -85,6 +97,11 @@ def add_TaskerServicer_to_server(servicer, server):
           servicer.GetTask,
           request_deserializer=todo__pb2.Task.FromString,
           response_serializer=todo__pb2.Task.SerializeToString,
+      ),
+      'UpdateTask': grpc.unary_unary_rpc_method_handler(
+          servicer.UpdateTask,
+          request_deserializer=todo__pb2.Task.FromString,
+          response_serializer=todo__pb2.CreateTaskResponse.SerializeToString,
       ),
       'DeleteTask': grpc.unary_unary_rpc_method_handler(
           servicer.DeleteTask,

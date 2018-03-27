@@ -30,7 +30,7 @@ class Tasker(todo_pb2_grpc.TaskerServicer):
 
         logging.info("CreateTask method completed")
 
-        return todo_pb2.CreateTaskResponse(op_status=dummy_status)
+        return todo_pb2.CreateTaskResponse(op_status=dummy_status, task=task)
 
     def GetAllTasks(self, request, context):
         logging.info("Listing all tasks")
@@ -44,6 +44,20 @@ class Tasker(todo_pb2_grpc.TaskerServicer):
         task = DATA_STORE.get(request.id, todo_pb2.Task())
         logging.info("Got data: {}".format(task))
         return task
+
+    def UpdateTask(self, request, context):
+        logging.info("Received message: {}".format(request))
+
+        task = DATA_STORE.get(request.id, None)
+
+        if task is not None:
+            task.status = todo_pb2.Task.COMPLETED
+            dummy_status = todo_pb2.OperationStatus(status=1)
+            return todo_pb2.CreateTaskResponse(op_status=dummy_status, task=task)
+        else:
+            task = todo_pb2.Task()
+            dummy_status = todo_pb2.OperationStatus(status=2)
+            return todo_pb2.CreateTaskResponse(op_status=dummy_status, task=task)
 
     def DeleteTask(self, request, context):
         logging.info("Delete task with ID: {}".format(request.id))

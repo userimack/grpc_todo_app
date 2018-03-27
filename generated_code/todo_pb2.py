@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='todo.proto',
   package='todo_app',
   syntax='proto3',
-  serialized_pb=_b('\n\ntodo.proto\x12\x08todo_app\"\x14\n\x12GetAllTasksRequest\"\x8a\x01\n\x0fOperationStatus\x12\x30\n\x06status\x18\x01 \x01(\x0e\x32 .todo_app.OperationStatus.Status\x12\x0e\n\x06\x65rrors\x18\x02 \x03(\t\"5\n\x06Status\x12\x12\n\x0eUNKNOWN_STATUS\x10\x00\x12\x0b\n\x07SUCCESS\x10\x01\x12\n\n\x06\x46\x41ILED\x10\x02\"`\n\x12\x43reateTaskResponse\x12,\n\top_status\x18\x01 \x01(\x0b\x32\x19.todo_app.OperationStatus\x12\x1c\n\x04task\x18\x02 \x01(\x0b\x32\x0e.todo_app.Task\"B\n\x12\x44\x65leteTaskResponse\x12,\n\top_status\x18\x01 \x01(\x0b\x32\x19.todo_app.OperationStatus\"\x9f\x01\n\x04Task\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12)\n\x06status\x18\x03 \x01(\x0e\x32\x19.todo_app.Task.TaskStatus\"K\n\nTaskStatus\x12\x17\n\x13UNKNOWN_TASK_STATUS\x10\x00\x12\x0c\n\x08\x43OMPLETE\x10\x01\x12\x0c\n\x08PROGRESS\x10\x02\x12\x08\n\x04TODO\x10\x03\"*\n\tTasksList\x12\x1d\n\x05tasks\x18\x01 \x03(\x0b\x32\x0e.todo_app.Task2\xf5\x01\n\x06Tasker\x12<\n\nCreateTask\x12\x0e.todo_app.Task\x1a\x1c.todo_app.CreateTaskResponse\"\x00\x12\x42\n\x0bGetAllTasks\x12\x1c.todo_app.GetAllTasksRequest\x1a\x13.todo_app.TasksList\"\x00\x12+\n\x07GetTask\x12\x0e.todo_app.Task\x1a\x0e.todo_app.Task\"\x00\x12<\n\nDeleteTask\x12\x0e.todo_app.Task\x1a\x1c.todo_app.DeleteTaskResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\ntodo.proto\x12\x08todo_app\"\x14\n\x12GetAllTasksRequest\"\x8a\x01\n\x0fOperationStatus\x12\x30\n\x06status\x18\x01 \x01(\x0e\x32 .todo_app.OperationStatus.Status\x12\x0e\n\x06\x65rrors\x18\x02 \x03(\t\"5\n\x06Status\x12\x12\n\x0eUNKNOWN_STATUS\x10\x00\x12\x0b\n\x07SUCCESS\x10\x01\x12\n\n\x06\x46\x41ILED\x10\x02\"`\n\x12\x43reateTaskResponse\x12,\n\top_status\x18\x01 \x01(\x0b\x32\x19.todo_app.OperationStatus\x12\x1c\n\x04task\x18\x02 \x01(\x0b\x32\x0e.todo_app.Task\"B\n\x12\x44\x65leteTaskResponse\x12,\n\top_status\x18\x01 \x01(\x0b\x32\x19.todo_app.OperationStatus\"\xa2\x01\n\x04Task\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12)\n\x06status\x18\x03 \x01(\x0e\x32\x19.todo_app.Task.TaskStatus\"N\n\nTaskStatus\x12\x17\n\x13UNKNOWN_TASK_STATUS\x10\x00\x12\r\n\tCOMPLETED\x10\x01\x12\x0e\n\nINPROGRESS\x10\x02\x12\x08\n\x04TODO\x10\x03\"*\n\tTasksList\x12\x1d\n\x05tasks\x18\x01 \x03(\x0b\x32\x0e.todo_app.Task2\xb3\x02\n\x06Tasker\x12<\n\nCreateTask\x12\x0e.todo_app.Task\x1a\x1c.todo_app.CreateTaskResponse\"\x00\x12\x42\n\x0bGetAllTasks\x12\x1c.todo_app.GetAllTasksRequest\x1a\x13.todo_app.TasksList\"\x00\x12+\n\x07GetTask\x12\x0e.todo_app.Task\x1a\x0e.todo_app.Task\"\x00\x12<\n\nUpdateTask\x12\x0e.todo_app.Task\x1a\x1c.todo_app.CreateTaskResponse\"\x00\x12<\n\nDeleteTask\x12\x0e.todo_app.Task\x1a\x1c.todo_app.DeleteTaskResponse\"\x00\x62\x06proto3')
 )
 
 
@@ -61,11 +61,11 @@ _TASK_TASKSTATUS = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='COMPLETE', index=1, number=1,
+      name='COMPLETED', index=1, number=1,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='PROGRESS', index=2, number=2,
+      name='INPROGRESS', index=2, number=2,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
@@ -76,7 +76,7 @@ _TASK_TASKSTATUS = _descriptor.EnumDescriptor(
   containing_type=None,
   options=None,
   serialized_start=438,
-  serialized_end=513,
+  serialized_end=516,
 )
 _sym_db.RegisterEnumDescriptor(_TASK_TASKSTATUS)
 
@@ -255,7 +255,7 @@ _TASK = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=354,
-  serialized_end=513,
+  serialized_end=516,
 )
 
 
@@ -285,8 +285,8 @@ _TASKSLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=515,
-  serialized_end=557,
+  serialized_start=518,
+  serialized_end=560,
 )
 
 _OPERATIONSTATUS.fields_by_name['status'].enum_type = _OPERATIONSTATUS_STATUS
@@ -355,8 +355,8 @@ _TASKER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=560,
-  serialized_end=805,
+  serialized_start=563,
+  serialized_end=870,
   methods=[
   _descriptor.MethodDescriptor(
     name='CreateTask',
@@ -386,9 +386,18 @@ _TASKER = _descriptor.ServiceDescriptor(
     options=None,
   ),
   _descriptor.MethodDescriptor(
+    name='UpdateTask',
+    full_name='todo_app.Tasker.UpdateTask',
+    index=3,
+    containing_service=None,
+    input_type=_TASK,
+    output_type=_CREATETASKRESPONSE,
+    options=None,
+  ),
+  _descriptor.MethodDescriptor(
     name='DeleteTask',
     full_name='todo_app.Tasker.DeleteTask',
-    index=3,
+    index=4,
     containing_service=None,
     input_type=_TASK,
     output_type=_DELETETASKRESPONSE,

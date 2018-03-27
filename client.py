@@ -28,40 +28,41 @@ print(resp)
 
 """
 # Working repl code
-In [52]: import grpc
-    ...: import time
-    ...:
-    ...: from generated_code import todo_pb2
-    ...: from generated_code import todo_pb2_grpc
-    ...:
-    ...:
-    ...: channel = grpc.insecure_channel("localhost:50051")
-    ...:
-    ...: stub = todo_pb2_grpc.TaskerStub(channel)
-    ...:
-    ...: task = todo_pb2.Task()
-    ...: task.id = 1 #int(time.strftime('%Y%m%d%H%M%S'))
-    ...: task.description = "some text"
-    ...: task.status = todo_pb2.Task.TODO
-    ...:
-    ...: task1 = todo_pb2.Task()
-    ...: task1.id = 2 #int(time.strftime('%Y%m%d%H%M%S'))
-    ...: task1.description = "some text"
-    ...: task1.status = todo_pb2.Task.TODO
-    ...:
-    ...: stub.CreateTask(task)
-    ...: stub.CreateTask(task1)
-    ...:
-    ...: print("Listing all tasks")
-    ...: resp = stub.GetAllTasks(todo_pb2.GetAllTasksRequest())
-    ...: print(resp)
-    ...: task2 = todo_pb2.Task(id =3)
-    ...: task2.id = 1
-    ...: stub.GetTask(task)
-    ...: print("Deleting task1")
-    ...: stub.DeleteTask(task1)
-    ...: print("Listing all tasks")
-    ...: resp = stub.GetAllTasks(todo_pb2.GetAllTasksRequest())
-    ...: print(resp)
+
+import grpc
+import time
+
+from generated_code import todo_pb2
+from generated_code import todo_pb2_grpc
+
+
+channel = grpc.insecure_channel("localhost:50051")
+
+stub = todo_pb2_grpc.TaskerStub(channel)
+
+task = todo_pb2.Task()
+task.id = 1 #int(time.strftime('%Y%m%d%H%M%S'))
+task.description = "some text"
+task.status = todo_pb2.Task.TODO
+
+task1 = todo_pb2.Task()
+task1.id = 2 #int(time.strftime('%Y%m%d%H%M%S'))
+task1.description = "some text"
+task1.status = todo_pb2.Task.TODO
+
+stub.CreateTask(task)
+stub.CreateTask(task1)
+
+print("Listing all tasks")
+resp = stub.GetAllTasks(todo_pb2.GetAllTasksRequest())
+print(resp)
+task2 = todo_pb2.Task(id =3)
+task2.id = 1
+stub.GetTask(task)
+print("Deleting task1")
+stub.DeleteTask(task1)
+print("Listing all tasks")
+resp = stub.GetAllTasks(todo_pb2.GetAllTasksRequest())
+print(resp)
 """
 
