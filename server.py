@@ -64,17 +64,20 @@ class Tasker(todo_pb2_grpc.TaskerServicer):
         logging.info("Listing all tasks")
         session = Session()
 
-        result_list = list()
+        result_list = []
 
         for task_object in session.query(Task).all():
+            #  import ipdb; ipdb.set_trace();
             task = todo_pb2.Task(id=task_object.id, description=task_object.description, status=todo_pb2.Task.TaskStatus.Value(task_object.status))
+            print("--->")
             logging.info(task)
-            result_list.append(task)
+            print("--->")
+            result_list.extend([task])
 
         logging.info(result_list)
         session.close()
 
-        return result_list
+        return todo_pb2.TasksList(tasks=result_list)
 
     def GetTask(self, request, context):
         try:
