@@ -7,7 +7,7 @@ Base = declarative_base()
 class Task(Base):
     __tablename__ = 'task'
     id = Column(Integer, Sequence('task_id_seq'), primary_key=True)
-    description = Column(String(200))
+    description = Column(String(200), nullable=False)
     status = Column(String(100))
 
     def __repr__(self):

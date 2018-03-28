@@ -4,10 +4,12 @@ import grpc
 import logging
 import sys
 
-#  import traceback
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from contextlib import contextmanager
+
+import traceback
 
 from generated_code import todo_pb2
 from generated_code import todo_pb2_grpc
@@ -18,130 +20,160 @@ from database.models import Task
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 # Database connection string
-engine = create_engine("sqlite:///database_todo_app.db", echo=True)
+engine = create_engine("sqlite:///database_todo_app.db", echo=False)
 #  conn = engine.connect()
 Session = sessionmaker(bind=engine)
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
-DATA_STORE = {}
+
+@contextmanager
+def session_scope():
+    """Provide a transactional scope around a series of operations."""
+    session = Session()
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        print(traceback.format_exc())
+        session.rollback()
+        #  logging.error("Some error happend")
+        #  logging.error(e)
+        raise
+    finally:
+        session.close()
 
 
 class Tasker(todo_pb2_grpc.TaskerServicer):
+    def create_task_pb(self, task_object):
+        task_pb = todo_pb2.Task()
+
+        if task_object is None:
+            return task_pb
+
+        if task_object.description is not None:
+            task_pb.description = task_object.description
+
+        if task_object.id is not None:
+            task_pb.id = task_object.id
+
+        task_pb.status = todo_pb2.Task.TaskStatus.Value(task_object.status)
+
+        #  if task_object.status is None or task_object.status == 'UNKNOWN_TASK_STATUS':
+        #      logging.info(">>> status is None setting it to TODO")
+        #      task_pb.status = todo_pb2.Task.TODO
+        #  else:
+        #      logging.info(">>> status is not None")
+        #      task_pb.status = todo_pb2.Task.TaskStatus.Value(task_object.status)
+        #      logging.info(task_object.status)
+
+        return task_pb
+
+    def create_db_task_object(task_pb):
+        pass
+
     def CreateTask(self, request, context):
         logging.info("CreateTask method started")
         logging.info("Received message: {}".format(request))
 
         try:
-            session = Session()
+            # Setting up default task status to TODO
+            if request.status == 0 or request.status is None:
+                request.status = todo_pb2.Task.TODO
 
-            task = Task(description=request.description, status=todo_pb2.Task.TaskStatus.Name(request.status))
-            session.add(task)
-            #  task_id = task.id
-            session.commit()
+            # Raise ValueError if description is not present
+            if request.description == "":
+                raise ValueError("Description cannot be blank")
 
-            task_object = session.query(Task).filter_by(id=task.id).first()
-            task = todo_pb2.Task(id=task_object.id, description=task_object.description, status=todo_pb2.Task.TaskStatus.Value(task_object.status))
+            with session_scope() as session:
+                task_object = Task(status=todo_pb2.Task.TaskStatus.Name(request.status), description=request.description)
+                session.add(task_object)
+                session.commit()
 
-            task_status = todo_pb2.OperationStatus(status=1)
+            #  with session_scope() as session:
+                task_object = session.query(Task).filter_by(id=task_object.id).first()
+                logging.info(task_object)
+                task_pb = self.create_task_pb(task_object)
+
+                task_status = todo_pb2.OperationStatus(status=1)
 
         except Exception as e:
-            session.rollback()
-            logging.error(e)
-
-            #  print(traceback.format_exc())
-
-            task = todo_pb2.Task()
-            task_status = todo_pb2.OperationStatus(status=2)
-        finally:
-            session.close()
+            print(traceback.format_exc())
+            task_pb = todo_pb2.Task()
+            task_status = todo_pb2.OperationStatus(status=2, errors=str(e).split("\n"))
 
         logging.info("CreateTask method completed")
 
-        return todo_pb2.CreateTaskResponse(op_status=task_status, task=task)
+        return todo_pb2.CreateTaskResponse(op_status=task_status, task=task_pb)
 
     def GetAllTasks(self, request, context):
         logging.info("Listing all tasks")
-        session = Session()
 
-        result_list = []
+        with session_scope() as session:
+            tasks_object = session.query(Task).all()
 
-        for task_object in session.query(Task).all():
-            #  import ipdb; ipdb.set_trace();
-            task = todo_pb2.Task(id=task_object.id, description=task_object.description, status=todo_pb2.Task.TaskStatus.Value(task_object.status))
-            print("--->")
-            logging.info(task)
-            print("--->")
-            result_list.extend([task])
+            result_list = list()
+
+            for task_object in tasks_object:
+                #  import ipdb; ipdb.set_trace();
+                task_pb = self.create_task_pb(task_object)
+                result_list.append(task_pb)
 
         logging.info(result_list)
-        session.close()
 
         return todo_pb2.TasksList(tasks=result_list)
 
     def GetTask(self, request, context):
         try:
-            session = Session()
             logging.info("Received ID: {}".format(request))
-            #  task = DATA_STORE.get(request.id, todo_pb2.Task())
-            task_object = session.query(Task).filter_by(id=request.id).one()
-            task = todo_pb2.Task(id=task_object.id, description=task_object.description, status=todo_pb2.Task.TaskStatus.Value(task_object.status))
-            logging.info("Got data: {}".format(task))
+            with session_scope() as session:
+                task_object = session.query(Task).filter_by(id=request.id).one()
+                task_pb = self.create_task_pb(task_object)
+                logging.info("Got data: {}".format(task_pb))
+
         except Exception as e:
-            task = todo_pb2.Task()
+            task_pb = todo_pb2.Task()
             logging.error(e)
 
-        finally:
-            session.close()
-
-        return task
+        return task_pb
 
     def UpdateTask(self, request, context):
         logging.info("Received message: {}".format(request))
 
         try:
-            session = Session()
-            task_object = session.query(Task).filter_by(id=request.id).update({Task.status: todo_pb2.Task.TaskStatus.Name(request.status)})
-            session.commit()
+            with session_scope() as session:
+                task_object = session.query(Task).filter_by(id=request.id).update({Task.status: todo_pb2.Task.TaskStatus.Name(request.status)})
+                session.commit()
 
-            task_object = session.query(Task).filter_by(id=request.id).one()
+                task_object = session.query(Task).filter_by(id=request.id).one()
 
-            task = todo_pb2.Task(id=task_object.id, description=task_object.description, status=todo_pb2.Task.TaskStatus.Value(task_object.status))
+                task_pb = self.create_task_pb(task_object)
+                #  task_pb = todo_pb2.Task(id=task_object.id, description=task_object.description, status=todo_pb2.Task.TaskStatus.Value(task_object.status))
 
             task_status = todo_pb2.OperationStatus(status=1)
 
-            return todo_pb2.CreateTaskResponse(op_status=task_status, task=task)
         except Exception as e:
-            session.rollback()
             logging.error(e)
-
-            task = todo_pb2.Task()
+            task_pb = todo_pb2.Task()
             task_status = todo_pb2.OperationStatus(status=2)
-            return todo_pb2.CreateTaskResponse(op_status=task_status, task=task)
-        finally:
-            session.close()
+
+        return todo_pb2.CreateTaskResponse(op_status=task_status, task=task_pb)
 
     def DeleteTask(self, request, context):
         logging.info("Delete task with ID: {}".format(request.id))
 
         try:
-            session = Session()
-            task = session.query(Task).filter_by(id=request.id).one()
-            session.delete(task)
-            session.commit()
+            with session_scope() as session:
+                task = session.query(Task).filter_by(id=request.id).one()
+                session.delete(task)
 
-            task_status = todo_pb2.OperationStatus(status=1)
+                task_status = todo_pb2.OperationStatus(status=1)
 
-            return todo_pb2.DeleteTaskResponse(op_status=task_status)
         except Exception as e:
-            session.rollback()
             logging.error(e)
             task_status = todo_pb2.OperationStatus(status=2)
 
-        finally:
-            session.close()
-
-            return todo_pb2.DeleteTaskResponse(op_status=task_status)
+        return todo_pb2.DeleteTaskResponse(op_status=task_status)
 
 
 def serve():
