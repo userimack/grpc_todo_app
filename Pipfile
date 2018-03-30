@@ -11,6 +11,8 @@ grpcio-tools = "*"
 alembic = "*"
 sqlalchemy = "*"
 "psycopg2" = "*"
+pytest = "*"
+pytest-mock = "*"
 
 
 [dev-packages]
