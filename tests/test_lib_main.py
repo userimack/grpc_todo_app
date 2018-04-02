@@ -1,7 +1,7 @@
 #  import pytest
 
 from lib.main import create_task, get_all_tasks, get_task, update_task, \
-    delete_task
+    delete_task, create_task_pb
 
 #  from database.connection import session_scope
 from generated_code import todo_pb2
@@ -49,8 +49,11 @@ def test_get_task_with_improper_request(mock_session):
 
 
 def test_get_all_tasks(mock_session):
-    response = get_all_tasks()
+    for index in range(2):
+        task = todo_pb2.Task(description="Task created for testing - {}.".format(index))
+        create_task(task)
 
+    response = get_all_tasks()
     assert isinstance(response, todo_pb2.TasksList)
 
 
@@ -63,7 +66,7 @@ def test_update_task(mock_session):
 
 
 def test_update_task_with_improper_request(mock_session):
-    response_update_task = delete_task(todo_pb2.Task())
+    response_update_task = update_task(todo_pb2.Task())
     assert response_update_task.op_status.status == todo_pb2.OperationStatus.FAILED
 
 
@@ -79,3 +82,7 @@ def test_delete_task_with_improper_request(mock_session):
     response_delete_task = delete_task(todo_pb2.Task())
     assert response_delete_task.op_status.status == todo_pb2.OperationStatus.FAILED
 
+
+def test_create_task_pb_with_none_task_object():
+    task_object = None
+    assert isinstance(create_task_pb(task_object), todo_pb2.Task)

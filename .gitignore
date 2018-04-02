@@ -3,3 +3,10 @@ __pycache__
 *.pyc
 
 .pytest_cache
+*.swp
+*,cover
+htmlcov
+test_database_todo_app.db
+
+.coverage
+coverage.xml

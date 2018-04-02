@@ -22,3 +22,11 @@ To apply the changes
 
     alembic upgrade head
 
+# To generate coverage report use the following command
+
+    py.test --cov=.               \
+            --cov-report=annotate \
+            --cov-report=html     \
+            --cov-report=term     \
+            --cov-report=xml
+

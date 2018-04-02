@@ -13,6 +13,7 @@ sqlalchemy = "*"
 "psycopg2" = "*"
 pytest = "*"
 pytest-mock = "*"
+pytest-cov = "*"
 
 
 [dev-packages]
