@@ -27,7 +27,10 @@ def tables(engine):
 @pytest.yield_fixture
 def db_session(engine, tables):
     #  import ipdb; ipdb.set_trace()
-    """Returns an sqlalchemy session, and after the test tears down everything properly."""
+    """
+    Returns an sqlalchemy session, and after the test tears down
+    everything properly.
+    """
     connection = engine.connect()
     # begin the nested transaction
     transaction = connection.begin()

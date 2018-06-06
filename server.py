@@ -3,6 +3,7 @@ import time
 import grpc
 import logging
 import sys
+import argparse
 
 from lib.main import create_task, get_all_tasks, get_task, update_task, \
     delete_task
@@ -51,4 +52,6 @@ def serve():
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Run server for TODO service')
+    parameters = parser.parse_args()
     serve()

@@ -92,7 +92,8 @@ def update_task(request):
     try:
         with session_scope() as session:
             task_object = session.query(Task).filter_by(id=request.id).update(
-                {Task.status: todo_pb2.Task.TaskStatus.Name(request.status), Task.description: request.description})
+                {Task.status: todo_pb2.Task.TaskStatus.Name(request.status),
+                    Task.description: request.description})
             session.commit()
 
             task_object = session.query(Task).filter_by(id=request.id).one()
